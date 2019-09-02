@@ -24,7 +24,9 @@ function download_poets_info($poet_id)
 
 function دابەزاندنی_هەموو_شێعرەکان()
 {
-    $poets = download_poets_info("all");
+    global $argv;
+    $arg = @$argv[1] ? $argv[1] : 'all';
+    $poets = download_poets_info($arg);
 
     foreach($poets as $poet)
     {
