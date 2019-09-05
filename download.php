@@ -52,9 +52,9 @@ function دابەزاندنی_هەموو_شێعرەکان()
             
             for($i=0; $i<count($poems); $i++)
             {
-                $poems[$i]["hon"] = str_replace(["\r","&#39;","&#34;","&laquo;","&raquo;"],
-                                                ["","'","\"","«","»"],$poems[$i]["hon"]);
-                $poems[$i]["hon"] = preg_replace("/\n\n+/", "\n\n", $poems[$i]["hon"]);
+                $poems[$i]["hon"] = str_replace(["\r","&#39;","&#34;","&laquo;","&raquo;","  ","   ","    "],
+                                                ["","'","\"","«","»"," "," "," "],$poems[$i]["hon"]);
+                $poems[$i]["hon"] = preg_replace("/\n\n+/u", "\n\n", $poems[$i]["hon"]);
                 $poems[$i]["hon"] = trim($poems[$i]["hon"]);
                 $poems[$i]["name"] = trim($poems[$i]["name"]);
                 $filename = kurdish_numbers($poems[$i]["id"]) . ". " .
@@ -65,22 +65,25 @@ function دابەزاندنی_هەموو_شێعرەکان()
                 $towrite .= "\nسەرناو: " . $poems[$i]["name"];
                 if(trim($poems[$i]["hdesc"]))
                 {
-                    $poems[$i]["hdesc"] = filter_var($poems[$i]["hdesc"],
-                                                     FILTER_SANITIZE_STRING);
-                    $towrite .= "\nلەبارەی شێعر: " . $poems[$i]["hdesc"];
+		    $poems[$i]["hdesc"] = str_replace("<br>", " - ", $poems[$i]["hdesc"]);
+		    $poems[$i]["hdesc"] = preg_replace("/\s\s+/u", " ", $poems[$i]["hdesc"]);
+		    $poems[$i]["hdesc"] = filter_var($poems[$i]["hdesc"],
+						     FILTER_SANITIZE_STRING);
+		    $poems[$i]["hdesc"] = trim($poems[$i]["hdesc"]);
+		    $towrite .= "\nلەبارەی شێعر: " . $poems[$i]["hdesc"];
                 }
-                $towrite .= "\n\n";
-                $towrite .= $poems[$i]["hon"];
-                file_put_contents($path . "/" . $filename, $towrite);
-            }
-        }
+		$towrite .= "\n\n";
+		$towrite .= $poems[$i]["hon"];
+		file_put_contents($path . "/" . $filename, $towrite);
+	    }
+	}
     }
 }
 
 function check_mkdir($path)
 {
     if(!file_exists($path))
-        mkdir($path, 0755, true);
+	mkdir($path, 0755, true);
 }
 
 function kurdish_numbers($string)
