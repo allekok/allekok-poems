@@ -2,7 +2,7 @@
 /* 
  * دابەزاندنی شێعرەکانی ئاڵەکۆک
  * بۆ زانیاری زیاتر سەردانی لاپەڕەی خوارەوە بکەن:
- * https://allekok.com/dev/tools/
+ * https://allekok.ir/dev/tools/
  */
 /* Constants */
 const __POEMS_DIR = "شێعرەکان";
@@ -13,7 +13,7 @@ const __POEMS_DIR = "شێعرەکان";
 /* Functions */
 function download_poets_info($poet_id)
 {
-    $url = "https://allekok.com/dev/tools/poet.php?poet=$poet_id";
+    $url = "https://allekok.ir/dev/tools/poet.php?poet=$poet_id";
     while(!$json = json_decode(file_get_contents($url), true))
     {
         sleep(1);
@@ -38,7 +38,7 @@ function دابەزاندنی_هەموو_شێعرەکان()
             check_mkdir($path);
 
             /* Comment: دابەزاندنی شێعرەکان */
-            $poems_uri = "https://allekok.com/dev/tools/poem.php?poet=" .
+            $poems_uri = "https://allekok.ir/dev/tools/poem.php?poet=" .
 			 $poet['id'] . "&book=" . $encoded_bk . "&poem=all";
             while(!$poems = json_decode(file_get_contents($poems_uri)
                 ,true)["poems"])
