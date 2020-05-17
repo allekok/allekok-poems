@@ -135,7 +135,7 @@ function لیست($path=".")
 \t<body>
 \t\t<h3>$title:</h3>\n";
 	foreach($list as $item) {
-		$p = mb_substr("$path/$item",1);
+		$p = "/allekok-poems/" . mb_substr("$path/$item",2);
 		$html .= "\t\t<p>
 \t\t\t<a href='$p'>
 \t\t\t\t$item
