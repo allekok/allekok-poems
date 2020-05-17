@@ -28,6 +28,7 @@ function دابەزاندنی_هەموو_شێعرەکان()
 {
 	global $argv;
 	$arg = @$argv[1] ? convert_numbers("ck","en",$argv[1]) : 'all';
+	if($arg == "list") return;
 	$poets = download_poets_info($arg);
 
 	foreach($poets as $poet)
@@ -135,7 +136,9 @@ function لیست($path=".")
 \t<body>
 \t\t<h3>$title:</h3>\n";
 	foreach($list as $item) {
-		$p = "/allekok-poems/" . mb_substr("$path/$item",2);
+		$p = "/allekok-poems/".mb_substr("$path/$item",2);
+		if(count(explode("/",$p)) <= 5 && $item != "ئیجازەنامە")
+			$p .= "/";
 		$html .= "\t\t<p>
 \t\t\t<a href='$p'>
 \t\t\t\t$item
