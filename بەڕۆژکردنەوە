@@ -1,3 +1,4 @@
+#!/usr/bin/php
 <?php
 /* 
  * دابەزاندنی شێعرەکانی ئاڵەکۆک
@@ -9,6 +10,7 @@ const __POEMS_DIR = "شێعرەکان";
 
 /* Run */
 دابەزاندنی_هەموو_شێعرەکان();
+لیست();
 
 /* Functions */
 function download_poets_info($poet_id)
@@ -25,7 +27,7 @@ function download_poets_info($poet_id)
 function دابەزاندنی_هەموو_شێعرەکان()
 {
 	global $argv;
-	$arg = @$argv[1] ? $argv[1] : 'all';
+	$arg = @$argv[1] ? convert_numbers("ck","en",$argv[1]) : 'all';
 	$poets = download_poets_info($arg);
 
 	foreach($poets as $poet)
@@ -57,7 +59,7 @@ function دابەزاندنی_هەموو_شێعرەکان()
 				$poems[$i]["hon"] = preg_replace("/\n\n+/u", "\n\n", $poems[$i]["hon"]);
 				$poems[$i]["hon"] = trim($poems[$i]["hon"]);
 				$poems[$i]["name"] = trim($poems[$i]["name"]);
-				$filename = kurdish_numbers($poems[$i]["id"]) . ". " .
+				$filename = convert_numbers("en","ck",$poems[$i]["id"]) . ". " .
 					    mb_substr(str_replace(["/","."], ["-",""], $poems[$i]["name"]),
 						      0, $max_file_name_length);
 				$towrite  = "شاعیر: " . $poet["profname"];
@@ -69,6 +71,7 @@ function دابەزاندنی_هەموو_شێعرەکان()
 					$poems[$i]["hdesc"] = preg_replace("/\s\s+/u", " ", $poems[$i]["hdesc"]);
 					$poems[$i]["hdesc"] = filter_var($poems[$i]["hdesc"],
 									 FILTER_SANITIZE_STRING);
+					$poems[$i]["hdesc"] = str_replace(["&#34;","&#39;"],["\"","'"],$poems[$i]["hdesc"]);
 					$poems[$i]["hdesc"] = trim($poems[$i]["hdesc"]);
 					$towrite .= "\nلەبارەی شێعر: " . $poems[$i]["hdesc"];
 				}
@@ -86,10 +89,60 @@ function check_mkdir($path)
 		mkdir($path, 0755, true);
 }
 
-function kurdish_numbers($string)
+function convert_numbers($f, $t, $string)
 {
-	return str_replace(['0','1','2','3','4','5','6','7','8','9'],
-			   ['٠','١','٢','٣','٤','٥','٦','٧','٨','٩'],
-			   $string);
+	$assoc = [
+		"en"=>['0','1','2','3','4','5','6','7','8','9'],
+		"ck"=>['٠','١','٢','٣','٤','٥','٦','٧','٨','٩'],
+	];
+	return str_replace($assoc[$f],$assoc[$t],$string);
+}
+
+function لیست($path=".")
+{
+	$list = [];
+	$d = opendir($path);
+	while(false !== ($o = readdir($d)))
+	{
+		if(in_array($o, [".","..",".git","بەڕۆژکردنەوە","index.html"]))
+			continue;
+		$p = "$path/$o";
+		if(is_dir($p)) لیست($p);
+		$list[] = $o;
+	}
+	usort($list, function ($a, $b) {
+		$a_n = intval(convert_numbers("ck","en",$a));
+		$b_n = intval(convert_numbers("ck","en",$b));
+
+		/* Sorting Numbers */
+		if($a_n and $b_n) return $a_n - $b_n;
+
+		/* Sorting Strings */
+		for($i=0; mb_substr($a,$i,1) == mb_substr($b,$i,1); $i++);
+		return mb_ord(mb_substr($b,$i,1)) -
+		       mb_ord(mb_substr($b,$i,1));
+	});
+	$title = mb_substr($path, 2);
+	if(!$title) $title = "ئاڵەکۆک";
+	$html = "<!DOCTYPE html>
+<html dir='rtl' lang='ckb'>
+\t<head>
+\t\t<meta charset='utf-8'>
+\t\t<title>
+\t\t\t$title
+\t\t</title>
+\t</head>
+\t<body>
+\t\t<h3>$title:</h3>\n";
+	foreach($list as $item) {
+		$p = mb_substr("$path/$item",1);
+		$html .= "\t\t<p>
+\t\t\t<a href='$p'>
+\t\t\t\t$item
+\t\t\t</a>
+\t\t</p>\n";
+	}
+	$html .= "\t</body>\n</html>";
+	file_put_contents("$path/index.html", $html);
 }
 ?>
