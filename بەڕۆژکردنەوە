@@ -28,7 +28,7 @@ function دابەزاندنی_هەموو_شێعرەکان()
 {
 	global $argv;
 	$arg = @$argv[1] ? convert_numbers("ck","en",$argv[1]) : 'all';
-	if($arg == "list") return;
+	if($arg == "لیست") return;
 	$poets = download_poets_info($arg);
 
 	foreach($poets as $poet)
@@ -111,18 +111,19 @@ function لیست($path=".")
 		if(is_dir($p)) لیست($p);
 		$list[] = $o;
 	}
-	usort($list, function ($a, $b) {
-		$a_n = intval(convert_numbers("ck","en",$a));
-		$b_n = intval(convert_numbers("ck","en",$b));
-
-		/* Sorting Numbers */
-		if($a_n and $b_n) return $a_n - $b_n;
-
+	
+	if(count(explode("/", "$path/$list[0]")) <= 4) {
 		/* Sorting Strings */
-		for($i=0; mb_substr($a,$i,1) == mb_substr($b,$i,1); $i++);
-		return mb_ord(mb_substr($b,$i,1)) -
-		       mb_ord(mb_substr($b,$i,1));
-	});
+		sort($list);
+	}
+	else {
+		/* Sorting Numbers */
+		usort($list, function ($a, $b) {
+			$a_n = intval(convert_numbers("ck","en",$a));
+			$b_n = intval(convert_numbers("ck","en",$b));
+			return $a_n - $b_n;
+		});
+	}
 	$title = mb_substr($path, 2);
 	if(!$title) $title = "ئاڵەکۆک";
 	$html = "<!DOCTYPE html>
