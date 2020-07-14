@@ -16,7 +16,14 @@ const __POEMS_DIR = "شێعرەکان";
 function download_poets_info($poet_id)
 {
 	$url = "https://allekok.ir/dev/tools/poet.php?poet=$poet_id";
-	while(!$json = json_decode(file_get_contents($url), true))
+	$arrContextOptions = [
+		"ssl" => [
+			"verify_peer" => false,
+			"verify_peer_name" => false,
+		],
+	];
+	while(!$json = json_decode(file_get_contents(
+		$url, false, stream_context_create($arrContextOptions)), true))
 	{
 		sleep(1);
 	}
@@ -43,7 +50,14 @@ function دابەزاندنی_هەموو_شێعرەکان()
 			/* Comment: دابەزاندنی شێعرەکان */
 			$poems_uri = "https://allekok.ir/dev/tools/poem.php?poet=" .
 				     $poet['id'] . "&book=" . $encoded_bk . "&poem=all";
-			while(!$poems = json_decode(file_get_contents($poems_uri)
+
+			$arrContextOptions = [
+				"ssl" => [
+					"verify_peer" => false,
+					"verify_peer_name" => false,
+				],
+			];
+			while(!$poems = json_decode(file_get_contents($poems_uri, false, stream_context_create($arrContextOptions))
 				,true)["poems"])
 			{
 				sleep(1);
