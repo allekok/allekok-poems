@@ -164,4 +164,9 @@ function لیست($path=".")
 	$html .= "\t</body>\n</html>";
 	file_put_contents("$path/index.html", $html);
 }
+/*
+ * Local Variables:
+ * mode: web
+ * End:
+ */
 ?>
