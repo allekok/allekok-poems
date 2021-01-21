@@ -16,14 +16,7 @@ const __POEMS_DIR = "شێعرەکان";
 function download_poets_info($poet_id)
 {
 	$url = "https://allekok.ir/dev/tools/poet.php?poet=$poet_id";
-	$arrContextOptions = [
-		"ssl" => [
-			"verify_peer" => false,
-			"verify_peer_name" => false,
-		],
-	];
-	while(!$json = json_decode(file_get_contents(
-		$url, false, stream_context_create($arrContextOptions)), true))
+	while(!$json = json_decode(file_get_contents($url), true))
 	{
 		sleep(1);
 	}
