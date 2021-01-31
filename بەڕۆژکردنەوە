@@ -32,7 +32,7 @@ function دابەزاندنی_هەموو_شێعرەکان()
 	$poets = download_poets_info($arg);
 	$poets_count = count($poets);
 
-	foreach($poets as $p => $poet)
+	foreach($poets as $p_num => $poet)
 	{
 		foreach($poet['bks'] as $i=>$book)
 		{
@@ -56,7 +56,8 @@ function دابەزاندنی_هەموو_شێعرەکان()
 			{
 				sleep(1);
 			}
-			echo "(" . $p+1 . " of {$poets_count})";
+			
+			echo "(" . ($p_num+1) . " of {$poets_count}) ";
 			echo "Poet: ".$poet["id"]."\tBook: ".($i+1)."\tPoems downloaded.\n";
 
 			/* Comment: پاشەکەوت کردنی شێعرەکان */
