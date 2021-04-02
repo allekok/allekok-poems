@@ -1,15 +1,15 @@
 #!/usr/bin/php
 <?php
 /* 
- * دابەزاندنی شێعرەکانی ئاڵەکۆک
+ * دابەزاندنی شیعرەکانی ئاڵەکۆک
  * بۆ زانیاری زیاتر سەردانی لاپەڕەی خوارەوە بکەن:
  * https://allekok.ir/dev/tools/
  */
 /* Constants */
-const __POEMS_DIR = "شێعرەکان";
+const __POEMS_DIR = "شیعرەکان";
 
 /* Run */
-دابەزاندنی_هەموو_شێعرەکان();
+دابەزاندنی_هەموو_شیعرەکان();
 لیست();
 
 /* Functions */
@@ -24,7 +24,7 @@ function download_poets_info($poet_id)
 	return $json;
 }
 
-function دابەزاندنی_هەموو_شێعرەکان()
+function دابەزاندنی_هەموو_شیعرەکان()
 {
 	global $argv;
 	$arg = @$argv[1] ? convert_numbers("ck","en",$argv[1]) : 'all';
@@ -41,7 +41,7 @@ function دابەزاندنی_هەموو_شێعرەکان()
 			$path = __POEMS_DIR . "/" . $poet['profname'] . "/" . $book;
 			check_mkdir($path);
 
-			/* Comment: دابەزاندنی شێعرەکان */
+			/* Comment: دابەزاندنی شیعرەکان */
 			$poems_uri = "https://allekok.ir/dev/tools/poem.php?poet=" .
 				     $poet['id'] . "&book=" . $encoded_bk . "&poem=all";
 
@@ -60,7 +60,7 @@ function دابەزاندنی_هەموو_شێعرەکان()
 			echo "(" . ($p_num+1) . " of {$poets_count}) ";
 			echo "Poet: ".$poet["id"]."\tBook: ".($i+1)."\tPoems downloaded.\n";
 
-			/* Comment: پاشەکەوت کردنی شێعرەکان */
+			/* Comment: پاشەکەوت کردنی شیعرەکان */
 			$max_file_name_length = 50;
 			
 			for($i=0; $i<count($poems); $i++)
@@ -84,7 +84,7 @@ function دابەزاندنی_هەموو_شێعرەکان()
 									 FILTER_SANITIZE_STRING);
 					$poems[$i]["hdesc"] = str_replace(["&#34;","&#39;"],["\"","'"],$poems[$i]["hdesc"]);
 					$poems[$i]["hdesc"] = trim($poems[$i]["hdesc"]);
-					$towrite .= "\nلەبارەی شێعر: " . $poems[$i]["hdesc"];
+					$towrite .= "\nلەبارەی شیعر: " . $poems[$i]["hdesc"];
 				}
 				$towrite .= "\n\n";
 				$towrite .= $poems[$i]["hon"];
