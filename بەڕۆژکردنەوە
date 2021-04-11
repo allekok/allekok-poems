@@ -148,7 +148,7 @@ function لیست($path=".")
 \t<body>
 \t\t<h3>$title:</h3>\n";
 	foreach($list as $item) {
-		$R = urlencode($item);
+		$R = rawurlencode($item);
 		$p = "/allekok-poems/".mb_substr("$path/$R",2);
 		if(count(explode("/",$p)) <= 5 && $item != "ئیجازەنامە")
 			$p .= "/";
