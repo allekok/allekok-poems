@@ -109,7 +109,7 @@ function لیست($path=".")
 	$d = opendir($path);
 	while(false !== ($o = readdir($d)))
 	{
-		if(in_array($o, [".","..",".git","بەڕۆژکردنەوە","index.html","README.md"]))
+		if(in_array($o, [".","..",".git","بەڕۆژکردنەوە","index.html","README.md","دەیتابەیس"]))
 			continue;
 		$p = "$path/$o";
 		if(is_dir($p)) لیست($p);
