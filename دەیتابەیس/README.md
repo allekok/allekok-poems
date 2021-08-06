@@ -46,6 +46,6 @@ python3 cli.py -v
 # As we've specified -v, it will output some basic logs and inserts data into the mentioned db.
 ```
 
-### Author
+## Author
 [@Dawood](https://github.com/Dawoodkhorsandi)
 
