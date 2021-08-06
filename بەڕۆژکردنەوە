@@ -45,13 +45,7 @@ function دابەزاندنی_هەموو_شیعرەکان()
 			$poems_uri = "https://allekok.ir/dev/tools/poem.php?poet=" .
 				     $poet['id'] . "&book=" . $encoded_bk . "&poem=all";
 
-			$arrContextOptions = [
-				"ssl" => [
-					"verify_peer" => false,
-					"verify_peer_name" => false,
-				],
-			];
-			while(!$poems = json_decode(file_get_contents($poems_uri, false, stream_context_create($arrContextOptions))
+			while(!$poems = json_decode(file_get_contents($poems_uri)
 				,true)["poems"])
 			{
 				sleep(1);
@@ -115,7 +109,7 @@ function لیست($path=".")
 	$d = opendir($path);
 	while(false !== ($o = readdir($d)))
 	{
-		if(in_array($o, [".","..",".git","بەڕۆژکردنەوە","index.html"]))
+		if(in_array($o, [".","..",".git","بەڕۆژکردنەوە","index.html","README.md"]))
 			continue;
 		$p = "$path/$o";
 		if(is_dir($p)) لیست($p);
