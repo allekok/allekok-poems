@@ -47,5 +47,5 @@ python3 cli.py -v
 ```
 
 ## Author
-[@Dawood](https://github.com/Dawoodkhorsandi)
+[@Dawoodkhorsandi](https://github.com/Dawoodkhorsandi)
 
