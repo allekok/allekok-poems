@@ -13,114 +13,145 @@ const __POEMS_DIR = "شیعرەکان";
 لیست();
 
 /* Functions */
-function download_poets_info($poet_id)
-{
+function download_poets_info($poet_id) {
 	$url = "https://allekok.ir/dev/tools/poet.php?poet=$poet_id";
 	while(!$json = json_decode(file_get_contents($url), true))
-	{
 		sleep(1);
-	}
 	echo "Poets info downloaded.\n\n";
 	return $json;
 }
 
-function دابەزاندنی_هەموو_شیعرەکان()
-{
+function دابەزاندنی_هەموو_شیعرەکان() {
 	global $argv;
-	$arg = @$argv[1] ? convert_numbers("ck","en",$argv[1]) : 'all';
-	if($arg == "لیست") return;
+	$arg = @$argv[1] ?
+	       convert_numbers("ck", "en", $argv[1]) :
+	       "all";
+	if($arg == "لیست")
+		return;
+	
 	$poets = download_poets_info($arg);
 	$poets_count = count($poets);
 
-	foreach($poets as $p_num => $poet)
-	{
-		foreach($poet['bks'] as $i=>$book)
-		{
+	foreach($poets as $p_num => $poet) {
+		foreach($poet['bks'] as $i => $book) {
 			$encoded_bk = urlencode($book);
 			$book = str_replace("/", "-", $book);
-			$path = __POEMS_DIR . "/" . $poet['profname'] . "/" . $book;
+			$path = __POEMS_DIR . "/" .
+				$poet['profname'] . "/" .
+				$book;
 			check_mkdir($path);
 
-			/* Comment: دابەزاندنی شیعرەکان */
-			$poems_uri = "https://allekok.ir/dev/tools/poem.php?poet=" .
-				     $poet['id'] . "&book=" . $encoded_bk . "&poem=all";
+			/* دابەزاندنی شیعرەکان */
+			$poems_uri = "https://allekok.ir/dev/tools/" .
+				     "poem.php?poet=" . $poet['id'] .
+				     "&book=" . $encoded_bk .
+				     "&poem=all";
 
-			while(!$poems = json_decode(file_get_contents($poems_uri)
-				,true)["poems"])
+			while(!$poems = json_decode(
+				file_get_contents($poems_uri),
+				true)["poems"])
 			{
 				sleep(1);
 			}
 			
 			echo "(" . ($p_num+1) . " of {$poets_count}) ";
-			echo "Poet: ".$poet["id"]."\tBook: ".($i+1)."\tPoems downloaded.\n";
+			echo "Poet: " . $poet["id"] . "\tBook: " .
+			     ($i + 1) . "\tPoems downloaded.\n";
 
-			/* Comment: پاشەکەوت کردنی شیعرەکان */
+			/* پاشەکەوت کردنی شیعرەکان */
 			$max_file_name_length = 50;
 			
-			for($i=0; $i<count($poems); $i++)
-			{
-				$poems[$i]["hon"] = str_replace(["\r","&#39;","&#34;","&laquo;","&raquo;","  ","   ","    "],
-								["","'","\"","«","»"," "," "," "],$poems[$i]["hon"]);
-				$poems[$i]["hon"] = preg_replace("/\n\n+/u", "\n\n", $poems[$i]["hon"]);
-				$poems[$i]["hon"] = trim($poems[$i]["hon"]);
-				$poems[$i]["name"] = trim($poems[$i]["name"]);
-				$filename = convert_numbers("en","ck",$poems[$i]["id"]) . ". " .
-					    mb_substr(str_replace(["/","."], ["-",""], $poems[$i]["name"]),
-						      0, $max_file_name_length);
-				$towrite  = "شاعیر: " . $poet["profname"];
+			for($i = 0; $i < count($poems); $i++) {
+				$poems[$i]["hon"] = str_replace(
+					["\r", "&#39;", "&#34;",
+					 "&laquo;", "&raquo;",
+					 "  ", "   ", "    "],
+					["", "'", "\"", "«", "»",
+					 " ", " ", " "],
+					$poems[$i]["hon"]);
+				$poems[$i]["hon"] = preg_replace(
+					"/\n\n+/u", "\n\n",
+					$poems[$i]["hon"]);
+				$poems[$i]["hon"] = trim(
+					$poems[$i]["hon"]);
+				$poems[$i]["name"] = trim(
+					$poems[$i]["name"]);
+				$filename = convert_numbers(
+					"en", "ck", $poems[$i]["id"]) .
+					    ". ";
+				$filename .= mb_substr(str_replace(
+					["/", "."],
+					["-", ""],
+					$poems[$i]["name"]
+				), 0, $max_file_name_length);
+				$towrite  = "شاعیر: " .
+					    $poet["profname"];
 				$towrite .= "\nکتێب: " . $book;
-				$towrite .= "\nسەرناو: " . $poems[$i]["name"];
-				if(trim($poems[$i]["hdesc"]))
-				{
-					$poems[$i]["hdesc"] = str_replace("<br>", " - ", $poems[$i]["hdesc"]);
-					$poems[$i]["hdesc"] = preg_replace("/\s\s+/u", " ", $poems[$i]["hdesc"]);
-					$poems[$i]["hdesc"] = filter_var($poems[$i]["hdesc"],
-									 FILTER_SANITIZE_STRING);
-					$poems[$i]["hdesc"] = str_replace(["&#34;","&#39;"],["\"","'"],$poems[$i]["hdesc"]);
-					$poems[$i]["hdesc"] = trim($poems[$i]["hdesc"]);
-					$towrite .= "\nلەبارەی شیعر: " . $poems[$i]["hdesc"];
+				$towrite .= "\nسەرناو: " .
+					    $poems[$i]["name"];
+				if(trim($poems[$i]["hdesc"])) {
+					$h = $poems[$i]["hdesc"];
+					$h = str_replace("<br>",
+							 " - ",
+							 $h);
+					$h = preg_replace("/\s\s+/u",
+							  " ",
+							  $h);
+					$h = filter_var(
+						$h,
+						FILTER_SANITIZE_STRING
+					);
+					$h = str_replace(
+						["&#34;", "&#39;"],
+						["\"", "'"],
+						$h);
+					$h = trim($h);
+					$towrite .= "\nلەبارەی شیعر: " .
+						    $h;
 				}
 				$towrite .= "\n\n";
 				$towrite .= $poems[$i]["hon"];
-				file_put_contents($path . "/" . $filename, $towrite);
+				file_put_contents($path . "/" .
+						  $filename,
+						  $towrite);
 			}
 		}
 	}
 }
 
-function check_mkdir($path)
-{
+function check_mkdir($path) {
 	if(!file_exists($path))
 		mkdir($path, 0755, true);
 }
 
-function convert_numbers($f, $t, $string)
-{
+function convert_numbers($f, $t, $string) {
 	$assoc = [
-		"en"=>['0','1','2','3','4','5','6','7','8','9'],
-		"ck"=>['٠','١','٢','٣','٤','٥','٦','٧','٨','٩'],
+		"en" => ['0','1','2','3','4','5','6','7','8','9'],
+		"ck" => ['٠','١','٢','٣','٤','٥','٦','٧','٨','٩'],
 	];
-	return str_replace($assoc[$f],$assoc[$t],$string);
+	return str_replace($assoc[$f], $assoc[$t], $string);
 }
 
-function لیست($path=".")
-{
+function لیست($path=".") {
 	$list = [];
 	$d = opendir($path);
-	while(false !== ($o = readdir($d)))
-	{
-		if(in_array($o, [".","..",".git","بەڕۆژکردنەوە","index.html","README.md","دەیتابەیس"]))
+	while(false !== ($o = readdir($d))) {
+		if(in_array($o, [".", "..", ".git",
+				 "بەڕۆژکردنەوە", "index.html",
+				 "README.md", "دەیتابەیس"]))
+		{
 			continue;
+		}
 		$p = "$path/$o";
-		if(is_dir($p)) لیست($p);
+		if(is_dir($p))
+			لیست($p);
 		$list[] = $o;
 	}
 	
 	if(count(explode("/", "$path/$list[0]")) <= 4) {
 		/* Sorting Strings */
 		sort($list);
-	}
-	else {
+	} else {
 		/* Sorting Numbers */
 		usort($list, function ($a, $b) {
 			$a_n = intval(convert_numbers("ck","en",$a));
@@ -129,7 +160,8 @@ function لیست($path=".")
 		});
 	}
 	$title = mb_substr($path, 2);
-	if(!$title) $title = "ئاڵەکۆک";
+	if(!$title)
+		$title = "ئاڵەکۆک";
 	$html = "<!DOCTYPE html>
 <html dir='rtl' lang='ckb'>
 \t<head>
@@ -143,7 +175,7 @@ function لیست($path=".")
 \t\t<h3>$title:</h3>\n";
 	foreach($list as $item) {
 		$R = rawurlencode($item);
-		$p = "/allekok-poems/".mb_substr("$path/$R",2);
+		$p = "/allekok-poems/" . mb_substr("$path/$R", 2);
 		if(count(explode("/",$p)) <= 5 && $item != "ئیجازەنامە")
 			$p .= "/";
 		$html .= "\t\t<p>
